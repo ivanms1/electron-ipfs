@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Button,
   HStack,
@@ -47,6 +47,9 @@ function UploadedFile({ file }: UploadedFileProps) {
             width="fit-content"
             padding="0 0.5rem"
             fontWeight="light"
+            _focus={{ outline: 'none' }}
+            color="#5153FF"
+            _hover={{ bgColor: 'transparent', textDecoration: 'underline' }}
             onClick={() => {
               onCopy();
               toast({
