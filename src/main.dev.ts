@@ -106,8 +106,6 @@ const createWindow = async () => {
           Bootstrap: [BOOTSTRAP_ADDRESSS],
         },
       });
-
-      const id = await node.id();
     } catch (error) {
       console.log(error);
     }
@@ -159,18 +157,22 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('upload-file', async (_, files) => {
-  const filesWithContent = await Promise.all(
-    files.map(async (file) => {
-      const fileContent = fs.readFileSync(file.path);
-      const content = Buffer.from(fileContent);
-      const res = await node.add({
-        path: file.name,
-        content,
-      });
+  try {
+    const filesWithContent = await Promise.all(
+      files.map(async (file) => {
+        const fileContent = fs.readFileSync(file.path);
+        const content = Buffer.from(fileContent);
+        const res = await node.add({
+          path: file.name,
+          content,
+        });
 
-      return { hash: String(res.cid), name: file.name };
-    })
-  );
+        return { hash: String(res.cid), name: file.name };
+      })
+    );
 
-  return filesWithContent;
+    return filesWithContent;
+  } catch (error) {
+    return error;
+  }
 });
