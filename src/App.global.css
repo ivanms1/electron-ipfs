@@ -6,8 +6,7 @@ body {
   position: relative;
   color: white;
   height: 100vh;
-  background-image: url('../assets/images/noslifactory-3gkyK1eDbbU-unsplash.jpg') !important;
-  background-size: cover !important;
+  background: #e7ecf8 !important;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;

@@ -12,7 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import fs from 'fs';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import IPFS from 'ipfs-core';
@@ -22,6 +22,8 @@ import MenuBuilder from './menu';
 
 const BOOTSTRAP_ADDRESSS =
   '/ip4/15.164.229.6/tcp/4001/ipfs/12D3KooWNubmXubMPzPY9B69HLAEpoRBS41MchdGCa9SgJtd5LnT';
+
+let node: any;
 
 export default class AppUpdater {
   constructor() {
@@ -94,7 +96,7 @@ const createWindow = async () => {
     }
 
     try {
-      const node = await IPFS.create({
+      node = await IPFS.create({
         libp2p: {
           modules: {
             connProtector: new Protector(fs.readFileSync('./swarm.key')),
@@ -104,8 +106,6 @@ const createWindow = async () => {
           Bootstrap: [BOOTSTRAP_ADDRESSS],
         },
       });
-
-      await node.bootstrap.clear();
 
       const id = await node.id();
     } catch (error) {
@@ -156,4 +156,21 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+ipcMain.handle('upload-file', async (_, files) => {
+  const filesWithContent = await Promise.all(
+    files.map(async (file) => {
+      const fileContent = fs.readFileSync(file.path);
+      const content = Buffer.from(fileContent);
+      const res = await node.add({
+        path: file.name,
+        content,
+      });
+
+      return { hash: String(res.cid), name: file.name };
+    })
+  );
+
+  return filesWithContent;
 });
