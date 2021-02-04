@@ -23,6 +23,7 @@ function Dropzone({ onDrop }: DropzoneProps) {
       borderRadius="10px"
       color="#C8C7C8"
       spacing="0.5rem"
+      _focus={{ outline: 'none' }}
       cursor="pointer"
       {...getRootProps()}
     >
