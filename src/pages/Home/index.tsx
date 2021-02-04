@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { ipcRenderer } from 'electron';
 import { useMutation } from 'react-query';
-import { Button, HStack, Spinner, Stack, Text } from '@chakra-ui/react';
+import {
+  Button,
+  HStack,
+  Spinner,
+  Stack,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 
 import Dropzone from '../../components/Dropzone';
@@ -24,11 +31,25 @@ const uploadFiles = async (files: any) => {
 function Home() {
   const [uploadedfiles, setUploadedfiles] = useState<any[]>([]);
 
-  const { mutateAsync: upload, isLoading, error } = useMutation(uploadFiles);
+  const { mutateAsync: upload, isLoading } = useMutation(uploadFiles);
+
+  const toast = useToast();
 
   const handleUpload = async (files: any) => {
-    const data = await upload(files);
-    setUploadedfiles([...uploadedfiles, ...data]);
+    const filteredFiles = files.filter(
+      (f) => !uploadedfiles.map((u) => u.name).includes(f.name)
+    );
+
+    if (!filteredFiles.length) {
+      toast({
+        title: 'No new files added',
+        status: 'error',
+        duration: 500,
+      });
+    }
+
+    const data = await upload(filteredFiles);
+    setUploadedfiles([...data, ...uploadedfiles]);
   };
 
   return (
@@ -67,23 +88,14 @@ function Home() {
           paddingRight="0.5rem"
           className={styles.FilesContainer}
         >
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <AnimatePresence>
-              {uploadedfiles.map(
-                (
-                  file: { path: string; name: string; hash?: string },
-                  index
-                ) => (
-                  <UploadedFile
-                    key={`${file.name}_${file.path}_${index}`}
-                    file={file}
-                  />
-                )
-              )}
-            </AnimatePresence>
-          )}
+          {isLoading && <Spinner />}
+          <AnimatePresence>
+            {uploadedfiles.map(
+              (file: { path: string; name: string; hash?: string }) => (
+                <UploadedFile key={`${file.name}_${file.path}`} file={file} />
+              )
+            )}
+          </AnimatePresence>
         </Stack>
       </Stack>
     </Stack>

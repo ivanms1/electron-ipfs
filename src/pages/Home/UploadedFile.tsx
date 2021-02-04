@@ -24,7 +24,9 @@ interface UploadedFileProps {
 
 function UploadedFile({ file }: UploadedFileProps) {
   const { onCopy } = useClipboard(file.hash || '');
+
   const toast = useToast();
+
   return (
     <motion.div
       initial={{ y: -100, opacity: 0 }}
