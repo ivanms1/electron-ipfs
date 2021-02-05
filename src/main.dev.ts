@@ -99,7 +99,9 @@ const createWindow = async () => {
       node = await IPFS.create({
         libp2p: {
           modules: {
-            connProtector: new Protector(fs.readFileSync('./swarm.key')),
+            connProtector: new Protector(
+              fs.readFileSync(getAssetPath('swarm.key'))
+            ),
           },
         },
         config: {
