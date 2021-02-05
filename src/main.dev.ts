@@ -159,7 +159,7 @@ app.on('activate', () => {
 ipcMain.handle('upload-file', async (_, files) => {
   try {
     const filesWithContent = await Promise.all(
-      files.map(async (file) => {
+      files.map(async (file: any) => {
         const fileContent = fs.readFileSync(file.path);
         const content = Buffer.from(fileContent);
         const res = await node.add({
@@ -172,6 +172,24 @@ ipcMain.handle('upload-file', async (_, files) => {
     );
 
     return filesWithContent;
+  } catch (error) {
+    return error;
+  }
+});
+
+ipcMain.handle('download-file', async (_, hash) => {
+  try {
+    for await (const file of node.get(hash)) {
+      if (!file.content) continue;
+
+      const content = [];
+
+      for await (const chunk of file.content) {
+        content.push(chunk);
+      }
+
+      return content;
+    }
   } catch (error) {
     return error;
   }

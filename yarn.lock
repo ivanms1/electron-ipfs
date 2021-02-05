@@ -10269,6 +10269,11 @@ rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-click-away-listener@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/react-click-away-listener/-/react-click-away-listener-1.5.3.tgz#aa1358027a82a6441d1a208467822fd116e4c4a9"
+  integrity sha512-ssGIB3rCBABlgOUVRPm/gFyCxwW0WcqxNJzTufCJm6UrZEAGfp2m679p+3obntedXc/mBXQi88PxSIWMRbRKeA==
+
 react-clientside-effect@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/react-clientside-effect/-/react-clientside-effect-1.2.3.tgz#95c95f520addfb71743608b990bfe01eb002012b"
