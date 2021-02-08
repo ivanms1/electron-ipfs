@@ -107,8 +107,9 @@ function Upload({ onClose }: UploadProps) {
             overflowY="auto"
             paddingRight="0.5rem"
             className={styles.FilesContainer}
+            alignItems="center"
           >
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner color="#5153FF" />}
             <AnimatePresence>
               {uploadedfiles.map(
                 (file: { path: string; name: string; hash?: string }) => (
