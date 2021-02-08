@@ -17,7 +17,13 @@ function Home() {
 
   return (
     <AnimateSharedLayout>
-      <Stack spacing="2rem">
+      <Stack
+        position="absolute"
+        top="50%"
+        left="50%"
+        transform="translate(-50%, -50%)"
+        spacing="2rem"
+      >
         <Text textAlign="center" fontSize="1.5rem">
           Conun IPFS Network
         </Text>
