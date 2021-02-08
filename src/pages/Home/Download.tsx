@@ -7,6 +7,7 @@ import {
   Text,
   Link,
   Image,
+  useToast,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ipcRenderer } from 'electron';
@@ -31,14 +32,31 @@ function Download({ onClose }: DownloadProps) {
 
   const downloadRef = useRef<HTMLElement | null>(null);
 
+  const toast = useToast();
+
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     const res = await download(hash);
-    const newFile = new Blob(res);
 
-    downloadRef.current.href = URL.createObjectURL(newFile);
-    downloadRef.current.download = 'file';
-    downloadRef.current.click();
+    if (res?.success) {
+      const newFile = new Blob(res.file);
+
+      downloadRef.current.href = URL.createObjectURL(newFile);
+      downloadRef.current.download = 'file';
+      downloadRef.current.click();
+
+      toast({
+        title: 'File downloaded',
+        status: 'success',
+        duration: 500,
+      });
+    } else {
+      toast({
+        title: 'An error happened',
+        status: 'error',
+        duration: 500,
+      });
+    }
   };
   return (
     <motion.div layoutId="Download">

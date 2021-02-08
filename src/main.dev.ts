@@ -181,18 +181,31 @@ ipcMain.handle('upload-file', async (_, files) => {
 
 ipcMain.handle('download-file', async (_, hash) => {
   try {
+    // eslint-disable-next-line
     for await (const file of node.get(hash)) {
+      // eslint-disable-next-line
       if (!file.content) continue;
 
       const content = [];
 
+      // eslint-disable-next-line
       for await (const chunk of file.content) {
         content.push(chunk);
       }
 
-      return content;
+      return {
+        success: true,
+        file: content,
+      };
     }
+
+    return {
+      success: false,
+    };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: String(error),
+    };
   }
 });
