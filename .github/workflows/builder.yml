@@ -37,8 +37,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 15.x
-        with:
-          args: -h
       - run: |
           yarn install
           yarn package
