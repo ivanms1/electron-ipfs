@@ -14,6 +14,13 @@ const components = [
 ];
 
 const defaultImageHashes = [
+  'QmcSkVnhkM9NUZDrgeXoEEMo4Kg8Mha9gZiNGUSH4W5tMQ',
+  'QmQmYFxU4q7jFfc9aA7oQdD2oCNTNeZYvMu6vpyXxkLhQr',
+  'QmfPjmutwXjqwTgaqp6VYrak2CUKqWePBsfV3JFjR4qokV',
+  'QmRxNwcHvbc169LyvSBp9oHRPfZ2aXMvF8vbyP41nPkdsv',
+  'QmW9kbr5tNjkQVjSWGAHeoXwF4JGSEcGpzUukFLXb2aNAM',
+  'QmWFLFSpVwyLgJZko8qG2e2QgLQsDUZGKy6wz1Y1d2zuVq',
+  'QmRNZNmchRkp7Ggb5hrP5M6UKTA1vptxnyzg6jF77Pjha1',
   'QmfMfxpPkPJsuQS6bLJWsEALr2e5h3BeavxY884coCjDSS',
   'QmXqp769KWuUMMQRLWcedn3aAca5Jn6Axv18QSJbKLzSib',
   'QmZCSAeoonVSywMNHx4J8asd1adNjoFopkp2VgXiUPnNVu',
