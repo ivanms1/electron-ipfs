@@ -256,6 +256,7 @@
     "electron-updater": "^4.3.4",
     "framer-motion": "^3.3.0-beta.22",
     "history": "^5.0.0",
+    "it-all": "^1.0.5",
     "react": "^17.0.1",
     "react-click-away-listener": "^1.5.3",
     "react-dom": "^17.0.1",
@@ -263,7 +264,8 @@
     "react-query": "^3.6.0",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.5",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "uint8arrays": "^2.1.2"
   },
   "devEngines": {
     "node": ">=10.x",

@@ -113,7 +113,11 @@ function Upload({ onClose }: UploadProps) {
             <AnimatePresence>
               {uploadedfiles.map(
                 (file: { path: string; name: string; hash?: string }) => (
-                  <UploadedFile key={`${file.name}_${file.path}`} file={file} />
+                  <UploadedFile
+                    key={`${file.name}_${file.path}`}
+                    file={file}
+                    handleImageHashes
+                  />
                 )
               )}
             </AnimatePresence>

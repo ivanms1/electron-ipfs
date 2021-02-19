@@ -23,9 +23,10 @@ const downloadFile = async (hash: string) => {
 
 interface DownloadProps {
   onClose: () => void;
+  handleImageHashes: (hash: string) => void;
 }
 
-function Download({ onClose }: DownloadProps) {
+function Download({ onClose, handleImageHashes }: DownloadProps) {
   const [hash, setHash] = useState('');
 
   const { mutateAsync: download, isLoading } = useMutation(downloadFile);
@@ -58,6 +59,7 @@ function Download({ onClose }: DownloadProps) {
       });
     }
   };
+
   return (
     <motion.div layoutId="Download">
       <Link
@@ -100,6 +102,13 @@ function Download({ onClose }: DownloadProps) {
             />
             <Button type="submit" colorScheme="green" isLoading={isLoading}>
               Download
+            </Button>
+            <Button
+              type="button"
+              onClick={() => handleImageHashes(hash)}
+              colorScheme="blue"
+            >
+              Save
             </Button>
           </HStack>
         </form>

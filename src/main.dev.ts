@@ -17,6 +17,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import IPFS from 'ipfs-core';
 import Protector from 'libp2p/src/pnet';
+import all from 'it-all';
+import uint8ArrayConcat from 'uint8arrays/concat';
 
 import MenuBuilder from './menu';
 
@@ -203,6 +205,22 @@ ipcMain.handle('download-file', async (_, hash) => {
       success: false,
     };
   } catch (error) {
+    return {
+      success: false,
+      error: String(error),
+    };
+  }
+});
+
+ipcMain.handle('get-image-preview', async (_, hash) => {
+  try {
+    const data = uint8ArrayConcat(await all(node.cat(hash)));
+    return {
+      success: true,
+      file: data,
+    };
+  } catch (error) {
+    console.log(error);
     return {
       success: false,
       error: String(error),
