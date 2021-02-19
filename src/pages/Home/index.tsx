@@ -13,9 +13,26 @@ const components = [
   { id: 'Preview', component: Preview, color: 'purple' },
 ];
 
+const defaultImageHashes = [
+  'QmfMfxpPkPJsuQS6bLJWsEALr2e5h3BeavxY884coCjDSS',
+  'QmXqp769KWuUMMQRLWcedn3aAca5Jn6Axv18QSJbKLzSib',
+  'QmZCSAeoonVSywMNHx4J8asd1adNjoFopkp2VgXiUPnNVu',
+  'QmeYzHaCn4DfbC1Cy9HaZAkWpRHwNW9z5vQ51jD2oY3AfH',
+  'QmeAc3ihmXrVCqHcAg4PcCqBFrhMaCvv6jvqHva72QWQuV',
+  'QmT9PPQkRhaEgytuDaGVQbvTk9uKCDUSV9VxwmWsokrDTH',
+  'QmeESidemusGDgRh7QDYzDM5i6UsGZsTrbihoAzU1rYres',
+  'QmS1fo7qgwL9YYcGQG5x8Pi6ZtmcQFM5H3GBUiip6WteDF',
+  'QmSq1cH2v94HwznzpXKbk5sPHbC17YVzaUqpQhJVjQ9onv',
+  'QmdzhyfdmvP9cKZB299PuUeBe6BjYyN7SEww4zz8KkvH6m',
+  'QmSxeHa4mmdT7Av1NnjYtvNUvrQSCkQcjgnwrxDVQwPzdZ',
+  'QmVFBb3E4TQj8k5qiWZhBb7bAVnJxDjbyt5rvectkpRRom',
+  'QmU9sAizWNDFo3uhrqFcuiYVbVXAfkKrSPgVBBeQ4Abbpb',
+  'QmVCPKwYwYyaGDT4ShNtogtFG6YybNb1x8ddjZiEMeyH46',
+];
+
 function Home() {
   const [selectPage, setSelectPage] = useState('');
-  const [imageHashes, setImageHashes] = useState<string[]>([]);
+  const [imageHashes, setImageHashes] = useState<string[]>(defaultImageHashes);
 
   const toast = useToast();
 
