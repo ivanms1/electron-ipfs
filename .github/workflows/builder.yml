@@ -1,0 +1,71 @@
+name: Build Executables
+
+on: [push]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - run: |
+          yarn install
+          yarn package
+      - name: Upload Executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-exec
+          path: release/
+  win:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+        with:
+          args: -h
+      - run: |
+          yarn install
+          yarn package
+      - name: Upload Executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: win-exec
+          path: release/
+
+  mac:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - run: |
+          yarn install
+          yarn package
+      - name: Upload Executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-exec
+          path: release/
