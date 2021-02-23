@@ -24,7 +24,7 @@ import Jimp from 'jimp';
 import MenuBuilder from './menu';
 
 const BOOTSTRAP_ADDRESSS =
-  '/ip4/192.168.100.105/tcp/4001/ipfs/QmWjz6xb8v9K4KnYEwP5Yk75k5mMBCehzWFLCvvQpYxF3d';
+  '/ip4/15.164.229.6/tcp/4001/ipfs/12D3KooWNubmXubMPzPY9B69HLAEpoRBS41MchdGCa9SgJtd5LnT';
 
 let node: any;
 
