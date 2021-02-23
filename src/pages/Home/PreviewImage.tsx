@@ -1,31 +1,55 @@
 import React from 'react';
 import { ipcRenderer } from 'electron';
 import { useQuery } from 'react-query';
-import { Image } from '@chakra-ui/react';
+import { Center, Image, Spinner, Stack, Text } from '@chakra-ui/react';
 
-const previewImage = async (hash: string) => {
-  const data = await ipcRenderer.invoke('get-image-preview', hash);
+const previewImage = async (file: any) => {
+  const data = await ipcRenderer.invoke('get-image-preview', file);
 
-  const newFile = new Blob([data.file.buffer]);
+  const preview = new Blob([data.preview.buffer]);
+  const description = new TextDecoder('utf-8').decode(data.description);
 
-  return URL.createObjectURL(newFile);
+  return {
+    description,
+    preview: URL.createObjectURL(preview),
+  };
 };
 
 interface PreviewImageProps {
-  hash: string;
+  file: {
+    description: {
+      hash: string;
+    };
+    preview: {
+      hash: string;
+    };
+    file: {
+      hash: string;
+    };
+  };
 }
 
-function PreviewImage({ hash }: PreviewImageProps) {
+function PreviewImage({ file }: PreviewImageProps) {
   const { data, isLoading } = useQuery(
-    ['get-preview', hash],
-    () => previewImage(hash),
-    { enabled: !!hash }
+    ['get-preview', file],
+    () => previewImage(file),
+    { enabled: !!file }
   );
 
   return isLoading ? (
-    <p>Loading ...</p>
+    <Center>
+      <Spinner />
+    </Center>
   ) : (
-    <Image width="250px" height="250px" objectFit="contain" src={data} />
+    <Stack>
+      <Image
+        width="360px"
+        height="202px"
+        objectFit="contain"
+        src={data?.preview}
+      />
+      <Text textAlign="center">{data?.description}</Text>
+    </Stack>
   );
 }
 

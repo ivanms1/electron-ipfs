@@ -103,13 +103,6 @@ function Download({ onClose, handleImageHashes }: DownloadProps) {
             <Button type="submit" colorScheme="green" isLoading={isLoading}>
               Download
             </Button>
-            <Button
-              type="button"
-              onClick={() => handleImageHashes(hash)}
-              colorScheme="blue"
-            >
-              Save
-            </Button>
           </HStack>
         </form>
       </Stack>

@@ -2,19 +2,18 @@ import React from 'react';
 import { Button, Stack, Text, Image, Grid } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-import PreviewImage from './PreviewImage';
-
 import close from '../../../assets/close.svg';
-
-import { previewImages } from '../../const';
+import PreviewImage from './PreviewImage';
+import getMyFiles from '../../helpers/getMyFiles';
 
 interface DownloadProps {
   onClose: () => void;
 }
 
-function Preview({ onClose }: DownloadProps) {
+function MyFiles({ onClose }: DownloadProps) {
+  const myFiles = getMyFiles();
   return (
-    <motion.div layoutId="Preview">
+    <motion.div layoutId="MyFiles">
       <Stack
         backgroundColor="#FFFFFF"
         padding="4rem 4rem"
@@ -24,7 +23,6 @@ function Preview({ onClose }: DownloadProps) {
         minHeight="391px"
         maxHeight="90vh"
         position="relative"
-        overflowY="auto"
       >
         <Button
           type="button"
@@ -38,11 +36,11 @@ function Preview({ onClose }: DownloadProps) {
           <Image src={close} alt="close" width={25} />
         </Button>
         <Text fontSize="1.8rem" textAlign="center">
-          Preview Files
+          My Files
         </Text>
         <Grid gridTemplateColumns="repeat(3, 1fr)" overflowY="auto" gap="1rem">
-          {previewImages.map((file) => (
-            <PreviewImage key={file.description.hash} file={file} />
+          {myFiles.map((file: any) => (
+            <PreviewImage key={file.file.hash} file={file} />
           ))}
         </Grid>
       </Stack>
@@ -50,4 +48,4 @@ function Preview({ onClose }: DownloadProps) {
   );
 }
 
-export default Preview;
+export default MyFiles;

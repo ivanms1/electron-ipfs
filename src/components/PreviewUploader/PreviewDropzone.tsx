@@ -2,13 +2,11 @@ import React from 'react';
 import { Stack, Image, Text } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
 
-import folder from '../../../assets/folder.svg';
-
 interface DropzoneProps {
   onDrop: (file: any) => void;
 }
 
-function Dropzone({ onDrop }: DropzoneProps) {
+function PreviewDropzone({ onDrop }: DropzoneProps) {
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     onDrop,
     multiple: false,
@@ -19,24 +17,29 @@ function Dropzone({ onDrop }: DropzoneProps) {
       justifyContent="center"
       alignItems="center"
       border="1px dashed #97BEFF"
-      padding="0.5rem 10rem"
+      padding="1rem"
       backgroundColor="#FBFBFF"
       borderRadius="10px"
       color="#C8C7C8"
-      spacing="0.5rem"
       _focus={{ outline: 'none' }}
       cursor="pointer"
       {...getRootProps()}
     >
       <input {...getInputProps()} />
-      <Image src={folder} width="50px" alt="folder" />
-      {acceptedFiles?.[0]?.name ? (
-        <Text>{acceptedFiles?.[0]?.name}</Text>
+      {acceptedFiles?.[0]?.path ? (
+        <Image
+          src={acceptedFiles?.[0].path}
+          marginTop="0  !important"
+          width="500px"
+          maxHeight="250px"
+          objectFit="contain"
+          alt="folder"
+        />
       ) : (
-        <Text>Drop your file</Text>
+        <Text>Upload a Preview Image</Text>
       )}
     </Stack>
   );
 }
 
-export default Dropzone;
+export default PreviewDropzone;

@@ -19,11 +19,12 @@ import IPFS from 'ipfs-core';
 import Protector from 'libp2p/src/pnet';
 import all from 'it-all';
 import uint8ArrayConcat from 'uint8arrays/concat';
+import Jimp from 'jimp';
 
 import MenuBuilder from './menu';
 
 const BOOTSTRAP_ADDRESSS =
-  '/ip4/15.164.229.6/tcp/4001/ipfs/12D3KooWNubmXubMPzPY9B69HLAEpoRBS41MchdGCa9SgJtd5LnT';
+  '/ip4/192.168.100.105/tcp/4001/ipfs/QmWjz6xb8v9K4KnYEwP5Yk75k5mMBCehzWFLCvvQpYxF3d';
 
 let node: any;
 
@@ -160,24 +161,33 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-ipcMain.handle('upload-file', async (_, files) => {
+ipcMain.handle('upload-file', async (_, info) => {
   try {
-    const filesWithContent = await Promise.all(
-      files.map(async (file: any) => {
-        const fileContent = fs.readFileSync(file.path);
-        const content = Buffer.from(fileContent);
-        const res = await node.add({
-          path: file.name,
-          content,
-        });
+    const descriptionHash = await node.add({ content: info.description });
+    const preview = await Jimp.read(info.preview.path);
+    await preview.resize(720, 404).quality(95);
+    const previewContent = await preview.getBufferAsync(preview.getMIME());
+    const previewHash = await node.add({
+      content: previewContent,
+    });
 
-        return { hash: String(res.cid), name: file.name };
-      })
-    );
+    const file = fs.readFileSync(info.file.path);
+    const fileContent = Buffer.from(file);
+    const fileHash = await node.add({
+      content: fileContent,
+    });
 
-    return filesWithContent;
+    return {
+      success: true,
+      description: { hash: String(descriptionHash.cid) },
+      preview: { hash: String(previewHash.cid), name: info.preview.name },
+      file: { hash: String(fileHash.cid), name: info.file.name },
+    };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: String(error),
+    };
   }
 });
 
@@ -212,15 +222,20 @@ ipcMain.handle('download-file', async (_, hash) => {
   }
 });
 
-ipcMain.handle('get-image-preview', async (_, hash) => {
+ipcMain.handle('get-image-preview', async (_, file) => {
   try {
-    const data = uint8ArrayConcat(await all(node.cat(hash)));
+    const description = uint8ArrayConcat(
+      await all(node.cat(file.description.hash))
+    );
+
+    const preview = uint8ArrayConcat(await all(node.cat(file.preview.hash)));
+
     return {
       success: true,
-      file: data,
+      description,
+      preview,
     };
   } catch (error) {
-    console.log(error);
     return {
       success: false,
       error: String(error),

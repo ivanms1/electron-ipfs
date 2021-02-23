@@ -5,7 +5,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import App from './App';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      cacheTime: 60000,
+    },
+  },
+});
 
 render(
   <QueryClientProvider client={queryClient}>

@@ -9,26 +9,43 @@ import {
   Text,
   useToast,
   Image,
+  Input,
+  Textarea,
 } from '@chakra-ui/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Controller, useForm } from 'react-hook-form';
 
 import Dropzone from '../../components/Dropzone';
-import UploadedFile from './UploadedFile';
+
+import PreviewUploader from '../../components/PreviewUploader';
 
 import close from '../../../assets/close.svg';
+import getMyFiles from '../../helpers/getMyFiles';
+import setMyFiles from '../../helpers/setMyFiles';
 
-import styles from './Home.module.css';
+const uploadFiles = async (info: FormData) => {
+  const preview = {
+    name: info.preview?.name,
+    path: info.preview?.path,
+  };
 
-const uploadFiles = async (files: any) => {
-  const data = await ipcRenderer.invoke(
-    'upload-file',
-    files.map((file: { path: string; name: string }) => ({
-      path: file.path,
-      name: file.name,
-    }))
-  );
+  const file = {
+    name: info.file?.name,
+    path: info.file?.path,
+  };
+  const data = await ipcRenderer.invoke('upload-file', {
+    description: info.description,
+    preview,
+    file,
+  });
 
   return data;
+};
+
+type FormData = {
+  file: any;
+  preview: any;
+  description: string;
 };
 
 interface UploadProps {
@@ -36,39 +53,47 @@ interface UploadProps {
 }
 
 function Upload({ onClose }: UploadProps) {
-  const [uploadedfiles, setUploadedfiles] = useState<any[]>([]);
+  const { mutateAsync: upload, isLoading } = useMutation<any>(uploadFiles);
 
-  const { mutateAsync: upload, isLoading } = useMutation(uploadFiles);
-
+  const { register, handleSubmit, control, reset } = useForm();
   const toast = useToast();
 
-  const handleUpload = async (files: any) => {
-    const filteredFiles = files.filter(
-      (f) => !uploadedfiles.map((u) => u.name).includes(f.name)
-    );
+  const onSubmit = handleSubmit(async (values) => {
+    const { success, ...data } = await upload(values);
 
-    if (!filteredFiles.length) {
+    if (success) {
+      const myFiles = getMyFiles();
+      setMyFiles([...myFiles, data]);
       toast({
-        title: 'No new files added',
+        status: 'success',
+        title: 'File added',
+        duration: 3000,
+        position: 'top',
+      });
+
+      reset();
+    } else {
+      toast({
         status: 'error',
-        duration: 500,
+        title: 'Oops',
+        description: String(data?.error),
+        duration: 2000,
+        position: 'top',
       });
     }
-
-    const data = await upload(filteredFiles);
-    setUploadedfiles([...data, ...uploadedfiles]);
-  };
+  });
 
   return (
     <motion.div layoutId="Upload">
       <Stack
-        spacing="2rem"
         backgroundColor="#FFFFFF"
-        padding="4rem 4rem"
+        padding="1rem 4rem"
         borderRadius="25px"
         boxShadow="0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20)"
         minWidth="40rem"
         position="relative"
+        overflowY="auto"
+        maxHeight="90vh"
       >
         <Button
           type="button"
@@ -82,46 +107,32 @@ function Upload({ onClose }: UploadProps) {
           <Image src={close} alt="close" width={25} />
         </Button>
         <Text fontSize="1.8rem" textAlign="center">
-          Upload your files
+          Upload your file
         </Text>
-        <Dropzone onDrop={handleUpload} />
-        <Stack>
-          {uploadedfiles.length && (
-            <HStack justifyContent="space-between">
-              <Text color="#C8C7C8" fontSize="1.2rem">
-                Uploaded Files
-              </Text>
-              <Button
-                type="button"
-                variant="outline"
-                color="#C8C7C8"
-                size="xs"
-                onClick={() => setUploadedfiles([])}
-              >
-                Clear
-              </Button>
-            </HStack>
-          )}
-          <Stack
-            maxHeight="300px"
-            overflowY="auto"
-            paddingRight="0.5rem"
-            className={styles.FilesContainer}
-            alignItems="center"
-          >
-            {isLoading && <Spinner color="#5153FF" />}
-            <AnimatePresence>
-              {uploadedfiles.map(
-                (file: { path: string; name: string; hash?: string }) => (
-                  <UploadedFile
-                    key={`${file.name}_${file.path}`}
-                    file={file}
-                    handleImageHashes
-                  />
-                )
-              )}
-            </AnimatePresence>
-          </Stack>
+        <Stack as="form" onSubmit={onSubmit} spacing="1rem">
+          <Controller
+            name="file"
+            control={control}
+            render={({ onChange }) => (
+              <Dropzone onDrop={(files) => onChange(files?.[0])} />
+            )}
+          />
+
+          <Controller
+            name="preview"
+            control={control}
+            render={({ onChange }) => (
+              <PreviewUploader onDrop={(files) => onChange(files?.[0])} />
+            )}
+          />
+          <Textarea
+            name="description"
+            placeholder="Description..."
+            ref={register}
+          />
+          <Button type="submit" colorScheme="blue" isLoading={isLoading}>
+            Submit
+          </Button>
         </Stack>
       </Stack>
     </motion.div>
