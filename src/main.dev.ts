@@ -26,6 +26,14 @@ import MenuBuilder from './menu';
 const BOOTSTRAP_ADDRESSS =
   '/ip4/15.164.229.6/tcp/4001/ipfs/12D3KooWNubmXubMPzPY9B69HLAEpoRBS41MchdGCa9SgJtd5LnT';
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 let node: any;
 
 export default class AppUpdater {
@@ -71,14 +79,6 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
@@ -96,23 +96,6 @@ const createWindow = async () => {
   mainWindow.webContents.on('did-finish-load', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
-    }
-
-    try {
-      node = await IPFS.create({
-        libp2p: {
-          modules: {
-            connProtector: new Protector(
-              fs.readFileSync(getAssetPath('swarm.key'))
-            ),
-          },
-        },
-        config: {
-          Bootstrap: [BOOTSTRAP_ADDRESSS],
-        },
-      });
-    } catch (error) {
-      console.log(error);
     }
 
     if (process.env.START_MINIMIZED) {
@@ -239,6 +222,37 @@ ipcMain.handle('get-image-preview', async (_, file) => {
     return {
       success: false,
       error: String(error),
+    };
+  }
+});
+
+ipcMain.handle('connect-to-ipfs', async () => {
+  try {
+    node = await IPFS.create({
+      libp2p: {
+        modules: {
+          connProtector: new Protector(
+            fs.readFileSync(getAssetPath('swarm.key'))
+          ),
+        },
+      },
+      config: {
+        Bootstrap: [BOOTSTRAP_ADDRESSS],
+      },
+    });
+
+    const version = await node.version();
+    const id = await node.id();
+
+    return {
+      success: true,
+      version,
+      id,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error,
     };
   }
 });

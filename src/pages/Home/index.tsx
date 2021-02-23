@@ -1,6 +1,8 @@
-import { Button, HStack, Stack, Text, useToast } from '@chakra-ui/react';
+import { Button, HStack, Stack, Text } from '@chakra-ui/react';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
+import { useMutation, useQuery } from 'react-query';
 import ClickAwayListener from 'react-click-away-listener';
+import { ipcRenderer } from 'electron';
 import React, { useState } from 'react';
 
 import Download from './Download';
@@ -15,11 +17,16 @@ const components = [
   { id: 'MyFiles', component: MyFiles, color: 'yellow' },
 ];
 
+const ipfsConnect = async () => {
+  const data = await ipcRenderer.invoke('connect-to-ipfs');
+  return data;
+};
+
 function Home() {
   const [selectPage, setSelectPage] = useState('');
 
   const Component = components.find((c) => c.id === selectPage)?.component;
-
+  const { mutateAsync: connect, data, isLoading } = useMutation(ipfsConnect);
   return (
     <AnimateSharedLayout>
       <Stack
@@ -28,10 +35,26 @@ function Home() {
         left="50%"
         transform="translate(-50%, -50%)"
         spacing="2rem"
+        overflowY="auto"
+        maxHeight="90vh"
       >
         <Text textAlign="center" fontSize="1.5rem">
           Conun IPFS Network
         </Text>
+        <Button
+          type="button"
+          isLoading={isLoading}
+          onClick={() => connect()}
+          colorScheme="orange"
+        >
+          Connect
+        </Button>
+        {data && (
+          <Text maxWidth="500px">
+            Connect response:{' '}
+            {data.success ? JSON.stringify(data, null, 2) : String(data.error)}
+          </Text>
+        )}
         <HStack justifyContent="space-around">
           {components.map((c) => (
             <motion.div key={c.id} layoutId={c.id}>

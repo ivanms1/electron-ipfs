@@ -23,10 +23,9 @@ const downloadFile = async (hash: string) => {
 
 interface DownloadProps {
   onClose: () => void;
-  handleImageHashes: (hash: string) => void;
 }
 
-function Download({ onClose, handleImageHashes }: DownloadProps) {
+function Download({ onClose }: DownloadProps) {
   const [hash, setHash] = useState('');
 
   const { mutateAsync: download, isLoading } = useMutation(downloadFile);
