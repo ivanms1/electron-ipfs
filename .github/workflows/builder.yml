@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 15.x
       - run: |
+          sudo apt-get install libssl-dev
           yarn install
           yarn package
       - name: Upload Executable
