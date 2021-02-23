@@ -30,7 +30,7 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
+    "productName": "CONUN IPFS",
     "appId": "org.erb.ElectronReact",
     "files": [
       "dist/",
@@ -67,12 +67,12 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "squirrel"
       ]
     },
     "linux": {
       "target": [
-        "AppImage"
+        "deb"
       ],
       "category": "Development"
     },
